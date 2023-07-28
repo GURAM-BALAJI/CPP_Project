@@ -1,0 +1,38 @@
+// Option 2: Add new bus
+                    std::string busNumber, busRouteID, busCapacity;
+                    std::cout << "Enter Bus Number: ";
+                    std::cin.ignore(); // Ignore the newline character left by previous input
+                    std::getline(std::cin, busNumber);
+                    std::cout << "Enter Bus Route ID: ";
+                    std::cin >> busRouteID;
+                    std::cout << "Enter Bus Capacity: ";
+                    std::cin >> busCapacity;
+
+                    // Verify if the route_id exists in route.csv before adding the bus
+                    if (!isValueExistsInCSV("routes.csv", busRouteID, 0))
+                    {
+                        std::cout << "Error: Route not found with the given ID. Bus not added.\n";
+                    }
+                    else
+                    {
+                        // Get the highest bus_id and increment it for the new bus
+                        std::vector<std::string> busesData = readCSV("bus.csv");
+                        int highestBusID = 0;
+                        for (size_t i = 1; i < busesData.size(); ++i)
+                        {
+                            std::vector<std::string> busFields = splitCSV(busesData[i]);
+                            int busID = std::stoi(busFields[0]);
+                            if (busID > highestBusID)
+                            {
+                                highestBusID = busID;
+                            }
+                        }
+                        int newBusID = highestBusID + 1;
+
+                        // Add the new bus to the bus.csv file
+                        std::string newBusData = std::to_string(newBusID) + "," + busNumber + "," + busRouteID + "," + busCapacity;
+                        busesData.push_back(newBusData);
+                        writeCSV("bus.csv", busesData);
+
+                        std::cout << "New bus added successfully.\n";
+                    }
